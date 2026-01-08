@@ -1,119 +1,154 @@
-import React, { use, useEffect, useState } from 'react';
-import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Suspense, lazy } from 'react';
- const Sidebar = lazy(() => import('../sidebar/Sidebar'));
+import React, {
+  createContext,
+  useEffect,
+  useState,
+  useRef,
+  Suspense,
+  lazy
+} from "react";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import dropdownImg from "../../assets/dropdown.svg";
-// import Viewprofile from './Dropdownpages/Viewprofile';
-import './dashboard.css'; 
+import "./dashboard.css";
+
+const Sidebar = lazy(() => import("../sidebar/Sidebar"));
+
+export const UserContext = createContext(null);
 
 function Dashboard() {
-   const location = useLocation();
-  const subpath = location.pathname.split("/")[1];
-  const {username, profile} = location.state ? location.state : {username:"Guest User", profile:""};
+  const [userData, setUserData] = useState({});
+  const [checkdropdown, setCheckdropdown] = useState(false);
+  const [menu, setMenu] = useState(false);
+
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const token = localStorage.getItem("token");
+  const { username = "Guest User", profile = "" } = location.state || {};
+
   const BASE_URL = "http://localhost:2025";
   const profilePic = `${BASE_URL}/uploads/profile/${profile}`;
-  const [checkdropdown, setCheckdropdown] = useState(false);
-  const [rotate, setRotate] = useState("0deg");
-  const [activedropdown, setActivedropdown] = useState(username);
-  const [menu, setMenu] = useState(false)
- 
-  const navigate = useNavigate();
 
-  function handleDropDown() {
+  /* ---------------- Fetch Dashboard Data ---------------- */
+  useEffect(() => {
+    fetch("http://localhost:2025/movieflix/dashboard", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setUserData(data.data))
+      .catch((err) => console.error(err));
+  }, []);
 
-    if(checkdropdown){
-      setCheckdropdown(false)
+  /* ---------------- Close Dropdown on Outside Click ---------------- */
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setCheckdropdown(false);
+      }
     }
-    else{
-      setCheckdropdown(true)
-    }
 
-    setCheckdropdown(!checkdropdown);
-    setRotate(checkdropdown ? "0deg" : "180deg");
-  }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
+  /* ---------------- Handlers ---------------- */
+  const handleDropDown = () => {
+    setCheckdropdown((prev) => !prev);
+  };
 
-  function hanldedropdownoption(e) {
+  const viewProfile = (e) => {
     e.preventDefault();
-    const name = e.target.dataset.name;
-    if (!name) return;
-  
-    setActivedropdown(name);
     setCheckdropdown(false);
-    setRotate("0deg");
+    navigate("/dashboard/profilesettings");
+  };
 
-    if (name === "Logout") {
-      alert("are you sure to logout")
-      console.log("Logging out...");
+  const logout = (e) => {
+    e.preventDefault();
+    if (window.confirm("Are you sure you want to logout?")) {
+      localStorage.removeItem("token");
+      navigate("/login");
     }
-     else {
-      console.log("next root")
-      navigate(`/${subpath }/${name.toLowerCase().replace(" ", "")}`);
-    }
-  }
- function handletoggle(){
-    if(!menu){
-    setMenu(true)
-    }
-    else{
-      setMenu(false)
-    }
- }
- 
+  };
+
+  const handletoggle = () => {
+    setMenu((prev) => !prev);
+  };
+
+  const rotate = checkdropdown ? "180deg" : "0deg";
+
+  /* ---------------- JSX ---------------- */
   return (
-    <div className="dashboard-container">
-      <div className="dashboard-header">
-        <div className="logo">
-          <h2>Movie Flix</h2>
-        </div>
+    <UserContext.Provider value={userData}>
+      <div className="dashboard-container">
+        {/* -------- Header -------- */}
+        <div className="dashboard-header">
+          <div className="logo">
+            <h2>Movie Flix</h2>
+          </div>
+
           <div className="user-section">
-            <div className="profile-circle">{ profile ? (
+            <div className="profile-circle">
+              {userData.profile ? (
                 <img
-                  src={profilePic}
+                  src={`http://localhost:2025/${userData.profile}`}
                   alt="Profile"
-                  
                   className="profile-image"
-                />) : "🕵️‍♀️" }
-                </div>
-            <div className="dropdown">
-              <div className="selectDropDown-section">
-                <div className="selectDropDown" onClick={handleDropDown}>
-                  <span className="activedropdown">{activedropdown}</span>
-                  <img 
-                    style={{ transform: `rotate(${rotate})`, transition: "transform 0.3s ease" }}
-                    src={dropdownImg}
-                    alt="Dropdown icon"
-                  />
-                </div>
+                />
+              ) : (
+                "🕵️‍♀️"
+              )}
+            </div>
+
+            {/* -------- Dropdown -------- */}
+            <div className="dropdown" ref={dropdownRef}>
+              <div className="selectDropDown" onClick={handleDropDown}>
+                <span className="activedropdown">View DropDown</span>
+                <img
+                  src={dropdownImg}
+                  alt="Dropdown"
+                  style={{
+                    transform: `rotate(${rotate})`,
+                    transition: "transform 0.3s ease",
+                  }}
+                />
               </div>
+
               {checkdropdown && (
                 <ul className="dropdown-content">
-                  <li data-name="User Name" onClick={hanldedropdownoption}>{username}</li>
-                  <li data-name="View Profile" onClick={hanldedropdownoption}>View Profile</li>
-                  <li data-name="Edit Profile" onClick={hanldedropdownoption}>Edit Profile</li>
-                  <li data-name="Logout" onClick={hanldedropdownoption}>Logout</li>
+                  <li>{userData.firstname} {userData.lastname}</li>
+                  <li onClick={viewProfile}>View Profile</li>
+                  <li onClick={logout}>Logout</li>
                 </ul>
               )}
             </div>
           </div>
         </div>
+
+        {/* -------- Main -------- */}
         <div className="dashboard-main">
-            <div className="menu" onClick={handletoggle}>
-              <i class="bi bi-list"></i>
-            </div>
-            <div className="sidebar-block">  
-               <Suspense fallback={ <div>processing...</div>}>  
-                  <Sidebar />
-                </Suspense>   
-            </div>
-            <div className="dashboard-content">
-                <Suspense fallback={ <div>processing...</div>}>  
-                  <Outlet /> 
-                </Suspense>
-            </div>
+          <div className="menu" onClick={handletoggle}>
+            <i className="bi bi-list"></i>
+          </div>
+
+          <div className="sidebar-block">
+            <Suspense fallback={<div>Loading Sidebar...</div>}>
+              <Sidebar />
+            </Suspense>
+          </div>
+
+          <div className="dashboard-content">
+            <Suspense fallback={<div>Loading Content...</div>}>
+              <Outlet />
+            </Suspense>
+          </div>
         </div>
+
         <footer>ramanasoftnocopyrights@2025</footer>
-    </div>
+      </div>
+    </UserContext.Provider>
   );
 }
 

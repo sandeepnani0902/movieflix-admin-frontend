@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../pagescss/movie.css";
+import "../../pagescss/movie.css";
 import { Movieform } from "./Movieform";
 
 function Movies() {
@@ -86,11 +86,11 @@ function Movies() {
       <div className="container">
         <div className="row">
 
-          <div className="col-4 col-lg-4 col-md-12 col-sm-12">
+          <div className="col-12 col-lg-4 col-md-12 col-sm-12">
             <Movieform fetchMovies={fetchMovies} />
           </div>
 
-          <div className="col-8 col-lg-8 col-md-12 col-sm-12">
+          <div className="col-12 col-lg-8 col-md-12 col-sm-12">
             <div className="movie-table">
               <table>
                 <thead>
@@ -118,14 +118,14 @@ function Movies() {
                           className="btn btn-primary"
                           onClick={() => playmovie(movie.videourl)}
                         >
-                          Play
+                           <i className='bi bi-play'></i>
                         </button>
 
                         <button
                           className="btn btn-danger"
                           onClick={() => DeleteMovie(movie._id)}
                         >
-                          Delete
+                           <i className='bi bi-trash'></i>
                         </button>
                       </td>
                     </tr>

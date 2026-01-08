@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import axios from 'axios';
-import '../pagescss/episode.css';
+import '../../pagescss/episode.css';
 
 export const Episode = ({
   SelectedWebseriesId,
@@ -94,7 +94,7 @@ export const Episode = ({
 
       if (data.success) {
         alert('✅ Episode added successfully!');
-
+        getwebseriesdata();
         // RESET FORM
         setEpisodeFormData({
           season: '',
@@ -104,7 +104,7 @@ export const Episode = ({
           episodebanner: null
         });
         episodebanner.current.value = null
-        getwebseriesdata();
+        
 
       } else {
         alert('❌ Failed to add episode');
@@ -121,16 +121,28 @@ export const Episode = ({
   }
   function deleteEpisode(e, webSeriesId, season, episode){
     e.preventDefault()
-    fetch(
-    `http://localhost:2025/movieflix/webseries/${webSeriesId}/season/${season}/episode/${episode}`,
+
+   if(confirm(`Do you want to  delete episode , ${webSeriesId}, ${season}, ${episode}`)){
+        fetch(
+    `http://localhost:2025/movieflix/webseries/${webSeriesId}/seasons/${season}/episodes/${episode}`,
         {
           method: "DELETE"
         }
       )
       .then(res => res.json())
-      .then(data => console.log(data))
+      .then(data =>
+       {
+        if(data.success){
+          getwebseriesdata();
+        }
+       }
+      )
       .catch(err => console.error(err));
-    }
+   }
+   else{
+    alert("episode not deleted")
+   }
+  }
 
   /* ================= JSX ================= */
   return (
@@ -285,7 +297,8 @@ export const Episode = ({
                                 season.episodes?.map( (episode, ei) =>
                                     <tr key={ei}>
                                         <td>
-                                            <img src={episode.banner} alt={episode.title} width={50}/>
+                                          {console.log(episode)}
+                                           <a href={`http://localhost:2025/${episode.banner}`} target='_blank'><img src={`http://localhost:2025/${episode.banner}`} alt={episode.title} width={50}/></a> 
                                         </td>
                                         <td>season{season.seasonNumber}</td>
                                         <td>episode{episode.episodeNumber}</td>

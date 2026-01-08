@@ -1,9 +1,11 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react'
 const AddSeasons = lazy(() => import('./AddSeasons').then(module => ({ default: module.AddSeasons })));
 const WebSeriesform = lazy(() => import('./Webseriesform').then(module => ({ default: module.WebSeriesform })));
-import '../pagescss/webseries.css'
+import '../../pagescss/webseries.css'
 import axios from 'axios';
 import { Episode } from './Episode';
+import UpdateSeriesForm from './UpdateSeriesForm';
+import UpdateseasonForm from './updateseasonForm';
 function WebSeries() {
 //   const [webSeries , setWebSeries] = useState([{
 //       maintitle:"the witcher",
@@ -104,11 +106,11 @@ function WebSeries() {
  const [SelectedWebseriesId, setSelectedWebseriesId] = useState(null);  
  const [showEpisodePage, setShowEpisodePage] = useState(false);
  const [showupdateSeasonForm, setshowupdateSeasonForm] = useState(false);
- 
+ const [showUpdateSereisForm, setShowUpdateSeriesForm] = useState(false)
  const [UpdatedSeasonData, setUdatedSeasonData] = useState({
-  id:"",
-  seasonNumber:"",
-  title:"",
+  id:null,
+  seasonNumber:null,
+  title:null,
  })
    useEffect(()=>{
     fetchWebSeries();   
@@ -124,10 +126,7 @@ function WebSeries() {
 
   // collection form data 
 
-  function handleseasonInput(e){
-    const {name, value} =e.target
-    setUdatedSeasonData( prev =>({...prev, [name]:value}))
-  }
+ 
   function handleseasonform(e){
     e.preventDefault()
     console.log(UpdatedSeasonData)
@@ -138,7 +137,7 @@ function WebSeries() {
   // delete webseries from db
    function DeleteWebseriesDb(e,id){
     e.preventDefault()
-    
+    if(confirm("Do you want to delete webserie")){
     axios.delete(`http://localhost:2025/movieflix/webseries/${id}`)
     .then((res)=>{
       // console.log(res.data);
@@ -147,21 +146,50 @@ function WebSeries() {
     .catch((err)=>{
       console.error("error while deleting webseries:", err.sessage);
     })  
+  }
    }
 
   //  manage seasons
     function ManageSeries(e,id){ 
     e.preventDefault();
     console.log("manage seasons for webseries id:", id);
+    console.log(webseriesId)
+    setShowUpdateSeriesForm(true)
+    setWebseriesId(id)
+      
     }
     function ManageSeason(e, wsId, seasonNumber){
       e.preventDefault()
       // const seasonNumber = Number(season)
-      setUdatedSeasonData( prev  => ({...prev, seasonNumber:seasonNumber,
+      setUdatedSeasonData( prev  => ({...prev, seasonNumber:Number(seasonNumber),
                                                id:wsId
                                              }))
       setshowupdateSeasonForm(true)  
     }
+   //update season title 
+   
+   function SendUpdateSeason(){
+    console.log(UpdatedSeasonData)
+    fetch(`http://localhost:2025/movieflix/webseries/${UpdatedSeasonData.id}/seasons/${UpdatedSeasonData.seasonNumber}/updatetitle`,{
+      method:"POST",
+      body:JSON.stringify({title:UpdatedSeasonData.title}),
+      headers:{
+        "Content-Type":"application/json"
+      }
+    })
+    .then( res => res.json())
+    .then( data => {
+      if(data.success){
+        alert("season title updated")
+        fetchWebSeries()
+      }
+
+    })
+    .catch(err => alert(err.message))
+    setshowupdateSeasonForm(false)
+
+   }
+
   // add seasons
     function ViewEpisodes(e, id,seasonNumber){
       e.preventDefault();
@@ -172,7 +200,22 @@ function WebSeries() {
   // delete season
     function DeleteSeason(e,id, seasonNumber){
       e.preventDefault();
-      // console.log("delete season for webseries id:", id, "season number:", seasonNumber);
+      console.log("delete season for webseries id:", id, "season number:", seasonNumber);
+      if(confirm(`are you sure to delete season ${seasonNumber}`)){
+      fetch(`http://localhost:2025/movieflix/webseries/${id}/seasons/${seasonNumber}`,{
+        method:"DELETE",
+        headers:{
+          "Content-Type":"application/json"
+        }
+      })
+      .then( res => res.json())
+      .then( data => {
+        if(data.success){
+          alert("season successfully deleted")
+        }
+      })
+      .catch( () => alert("season not deleted"))
+      }
     }
   return(
      ( showEpisodePage ? <Episode SelectedWebseriesId={SelectedWebseriesId} CurrentSeasonNumber={CurrentSeasonNumber}  setShowEpisodePage={setShowEpisodePage}/> : <div className='web-series'>
@@ -249,23 +292,7 @@ function WebSeries() {
                         <td className='seasons-block'>
                           <button className='btn btn-primary'onClick={(e)=> ManageSeries(e, ws._id)} >Manage Series</button><br />
                           <button className='btn btn-danger mt-1' onClick={(e)=> DeleteWebseriesDb(e,ws._id)}>Delete Series</button>
-                          { showupdateSeasonForm ? <div  className='manageseason'>
-                                <form action="" onSubmit={(e) =>handleseasonform(e)}>
-                                  <h5 className=''>Update season detail's here.. <button className='btn btn-danger m-0 p-1' onClick={()=> setIsUpdateSeason(false)}><i className='bi bi-x'></i></button>
-                                    <hr />
-                                  </h5> 
-                                  <div className="form-group">
-                                    <label htmlFor="">Title:</label>
-                                    <input type="text" name='title' id='title' onChange={(e)=> handleseasonInput(e)}/>
-                                  </div>
-                                  <div className="form-group">
-                                      <label htmlFor="">SeasonNumber:</label> 
-                                      <input type="text" value={UpdatedSeasonData?.seasonNumber } name='seasonNumber' id='seasonNumber' />
-                                  </div>
-                                  <button type='submit' className='btn btn-primary mt-3' >update</button>
-                                  <button className='btn btn-danger' onClick={()=> setshowupdateSeasonForm(false)}>close</button>
-                                </form>
-                          </div> :""}
+                         
                          </td>
                          
                       </tr>
@@ -275,9 +302,17 @@ function WebSeries() {
               </tbody>
               </table>
               {/* manage season here */}
+          { showupdateSeasonForm && <UpdateseasonForm 
+           UpdatedSeasonData={UpdatedSeasonData}
+            setshowupdateSeasonForm={setshowupdateSeasonForm} 
+            setUdatedSeasonData={setUdatedSeasonData}
+            SendUpdateSeason ={SendUpdateSeason}
+            />
               
-            </div>
-            
+              } 
+        {     showUpdateSereisForm &&  <UpdateSeriesForm setShowUpdateSeriesForm={setShowUpdateSeriesForm} webseriesId={webseriesId} fetchWebSeries={fetchWebSeries}/>}  
+        
+         </div>    
           </div>
           </div>
         </div>  

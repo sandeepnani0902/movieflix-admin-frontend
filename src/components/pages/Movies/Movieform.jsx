@@ -61,9 +61,15 @@ export const Movieform = () => {
     const { name, files } = e.target;
     setMovie(prev => ({ ...prev, [name]: files[0] }));
   }
-  function handleform(e) {
-    
+  function sumbitform(e){
     e.preventDefault();
+    setTimeout(() => {
+      handleform()
+    }, 1000);
+  }
+  function handleform() {
+    
+    
     const formData = new FormData()  
 
     Object.keys(movie).forEach( key => formData.append(key, movie[key]))
@@ -101,7 +107,7 @@ export const Movieform = () => {
     <div className='movie-form'>
       <div className="h4">Add New Movie</div>
 
-      <form onSubmit={handleform}>
+      <form onSubmit={sumbitform}>
 
         <label>Title:</label>
         <input type="text" name='title' value={movie.title} onChange={handleinput} required/>

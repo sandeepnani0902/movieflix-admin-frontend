@@ -100,6 +100,7 @@ function Register() {
 
 
   /* ------------------------------ SUBMIT ------------------------------- */
+  
   async function handleForm(e) {
     e.preventDefault();
 
@@ -122,12 +123,14 @@ function Register() {
       formData.append(key, value)
       
     })
+  
     const res = await fetch("http://localhost:2025/movieflix/register", {
       method:"POST",
       body:formData
      })
      const data = await res.json()
      if(!data?.message){
+      alert("successfully registered")
       navigate("/login")
      }     
      else{

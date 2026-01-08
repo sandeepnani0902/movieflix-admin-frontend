@@ -6,7 +6,22 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: width ease-in-out 0.5s;
 
+}
+.sidebar.collapsed {
+  width: 70px;
+}
+
+/* Hide text when collapsed */
+.sidebar.collapsed a span ,.sidebar.collapsed .logout span{
+  display: none;
+}
+
+/* Center icons when collapsed */
+.sidebar.collapsed a {
+  justify-content: center;
+  padding-left: 0;
 }
 .sidebar h2{
   color: #D4344A;
