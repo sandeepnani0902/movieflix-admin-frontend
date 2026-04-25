@@ -192,6 +192,26 @@ footer {
 .dropdown-content{
   width:  160px;
 }
+/* adding sidebar down */
+.dashboard-main {
+    flex-direction: column;
+  }
+
+  .sidebar-block {
+    width: 100%;
+    /* height: ; */
+    height: 100px;
+     position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+   
+  }
+
+ 
 }
 @media screen and (max-width:560px) {
   .dashboard-header .logo h2{

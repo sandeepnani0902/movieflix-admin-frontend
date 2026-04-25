@@ -73,14 +73,23 @@ function Genre() {
     console.error("not deleted...")
   }
   }
+  //pagination:
+      let [currentpage, setCurrentPage] = useState(1)
+      const perpage=5;
+      let start = currentpage *  perpage - perpage;
+      let end = currentpage * perpage
+      console.log(start, end)
+      let totalpages = Math.ceil(12/perpage)
+      let filtereddata = genrelist.slice(start, end)
+  
   return (
     <div className='genre-container'>
        <div className="genre-header">
         <h2>Language Management</h2>
       </div>
       <hr />
-        <Container className='contianer'>
-        <Row>
+        <Container fluid className='contianer-genre'>
+        <Row className="justify-content-md-center">
           <Col lg={4} md={6} xs={12}>
             <div className="form">
                <Form>
@@ -119,7 +128,7 @@ function Genre() {
                 </tr>
               </thead>
               <tbody>
-                {genrelist?.map( (g, index) => (
+                {filtereddata?.map( (g, index) => (
                   <tr key={g._id}>
                     <td>{index + 1}</td>
                     <td>{g.genre}</td>
@@ -130,6 +139,11 @@ function Genre() {
               </tbody>
             </table>
             {/* <Tabledata datatype={"genre"} data={ genrelist } headers={["Id", "Name", "Action"]} handledelete={handledelete}/> */}
+          </div>
+           <div>Page No: 
+          <button onClick={()=>{if(currentpage>1) setCurrentPage(prev => prev - 1)} }  disabled={currentpage === 1}>prev</button>
+          <span>{currentpage}</span>
+          <button onClick={()=> {if(currentpage<totalpages) setCurrentPage(prev => prev + 1)}}   disabled={currentpage === totalpages-1}>next</button>
           </div>
           </Col>
         </Row>

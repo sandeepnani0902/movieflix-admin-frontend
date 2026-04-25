@@ -217,6 +217,14 @@ function WebSeries() {
       .catch( () => alert("season not deleted"))
       }
     }
+    //pagination
+     let [currentpage, setPage] =useState(1)
+  let perpage = 1
+  let totalpages = Math.ceil(webSeries.length /perpage)
+  
+  const start = currentpage * perpage - perpage
+  const end = start + perpage
+  const currentpageData = webSeries.slice(start, end) 
   return(
      ( showEpisodePage ? <Episode SelectedWebseriesId={SelectedWebseriesId} CurrentSeasonNumber={CurrentSeasonNumber}  setShowEpisodePage={setShowEpisodePage}/> : <div className='web-series'>
           <div className="title">
@@ -244,8 +252,8 @@ function WebSeries() {
             </div>
             </div> 
           </div>
-          <div className="container">
-              <div className="row">
+          <div className="container-fluid">
+              <div className="row justify-content-center">
             <div className="col-3  col-lg-3 col-md-12 col-sm-12">
               <Suspense fallback={<div>Loading...</div>}> 
                  <WebSeriesform SeasonPopUp={setShowSeasonPopUp} setSeasonsCount={setSeasonsCount} setWebseriesId={setWebseriesId}/>
@@ -257,10 +265,11 @@ function WebSeries() {
               </div>}
               
             </div>
-          <div className="col-9 col-lg-9 col-md-12 col-sm-12">
+          <div className="col-9 col-lg-8 col-md-12 col-sm-12">
             <div className="web-series-table">
               <div className="h4">Web Series List({webSeries.length})</div>
-              <table>
+              <Suspense fallback={<div>loading..</div>}>
+            { currentpageData?.length>0 && <table>
                 <thead>
                   <tr>
                     <th>Title</th>
@@ -272,7 +281,7 @@ function WebSeries() {
                 </thead>
                 <tbody>
                   {
-                    webSeries?.map((ws, ind)=>{
+                    currentpageData?.map((ws, ind)=>{
                       return <tr key={ws._id}>
                         <td>{ws.title}</td>
                         <td>{ws.director}</td>
@@ -283,6 +292,7 @@ function WebSeries() {
                             return( <div key={si}>
                               <span><b>season{si+1}: {s.title} </b></span><br />
                               <span>epsidoes {s.episodes?.length || 0 }</span><br />
+                              <span></span>
                               <button className='btn btn-primary' onClick={(e)=> ViewEpisodes(e, ws._id, s.seasonNumber)}>View Episodes</button><br />
                               <button className='btn btn-secondary mt-1' onClick={(e)=> ManageSeason(e, ws._id, s.seasonNumber)}>Manage season</button>
                               <button className='btn btn-danger mt-1' onClick={(e)=> DeleteSeason(e, ws._id, s.seasonNumber)}> <i className='bi bi-trash'></i> Season</button>
@@ -300,7 +310,8 @@ function WebSeries() {
                     })
                   }
               </tbody>
-              </table>
+              </table>}
+              </Suspense>
               {/* manage season here */}
           { showupdateSeasonForm && <UpdateseasonForm 
            UpdatedSeasonData={UpdatedSeasonData}
@@ -311,7 +322,11 @@ function WebSeries() {
               
               } 
         {     showUpdateSereisForm &&  <UpdateSeriesForm setShowUpdateSeriesForm={setShowUpdateSeriesForm} webseriesId={webseriesId} fetchWebSeries={fetchWebSeries}/>}  
-        
+            <div className="pagination">
+                <button onClick={()=> {if(currentpage>1) setPage(prev => prev-1)}} disabled={currentpage===1}>Prev</button>
+                <span>{currentpage}</span>
+                <button onClick={()=> {if(totalpages>currentpage) setPage(prev=> prev+1)}} disabled={currentpage === totalpages}>Next</button>
+            </div>
          </div>    
           </div>
           </div>

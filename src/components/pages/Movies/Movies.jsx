@@ -1,35 +1,51 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../../pagescss/movie.css";
 import { Movieform } from "./Movieform";
 
 function Movies() {
   const [Moviesdata, setMoviesdata] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [currentpageData, setCurrentpageData] = useState([]);
+  const [currentpage, setPage] = useState(1);
+  const [language, setLanguage] =useState('')
+  const [genre, setGenre] = useState("")
 
-  // ✔ Reusable Fetch Function
+  const perpage = 2;
+  const totalpages = Math.ceil(filteredData.length / perpage);
+
+  const DebounceTimer = useRef();
+
+  // ✔ Fetch Movies
   function fetchMovies() {
     fetch("http://localhost:2025/movieflix/movies")
       .then(res => res.json())
       .then(data => {
         if (data.success) {
           setMoviesdata(data.data);
-        } else {
-          alert("Failed to fetch movies data");
+          setFilteredData(data.data); // important
         }
       })
       .catch(err => console.log("Error fetching movies:", err));
   }
 
-  // ✔ Fetch Only Once on Component Mount
+  // ✔ Fetch Once
   useEffect(() => {
     fetchMovies();
   }, []);
 
-  // Play Movie
+  // ✔ Pagination auto-update
+  useEffect(() => {
+    const start = currentpage * perpage - perpage;
+    const end = start + perpage;
+    setCurrentpageData(filteredData.slice(start, end));
+  }, [filteredData, currentpage]);
+
+  // ✔ Play Movie
   function playmovie(videourl) {
     window.open(videourl, "_blank");
   }
 
-  // ✔ Delete Movie + Refresh
+  // ✔ Delete Movie
   function DeleteMovie(id) {
     fetch(`http://localhost:2025/movieflix/movies/deletemovie/${id}`, {
       method: "DELETE"
@@ -37,15 +53,64 @@ function Movies() {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          alert("Movie deleted successfully");
-          fetchMovies(); // Refresh ONLY after delete
-        } else {
-          alert("Failed to delete movie");
+          fetchMovies();
         }
       })
       .catch(err => console.error("Error deleting movie:", err));
   }
 
+  // ✔ Filter Handler
+  function filterSearch(type, e) {
+    let value = e.target.value;
+
+    switch (type) {
+      case "language":
+        return debounceLang(value, 500);
+      case "genre":
+        return debounceGenre(value, 500);
+      default:
+        return ;
+    }
+  }
+
+  // ✔ Debounce Language
+  function debounceLang(v, d) {
+    clearTimeout(DebounceTimer.current);
+
+    DebounceTimer.current = setTimeout(() => {
+      filterLanguage(v);
+    }, d);
+  }
+
+  // ✔ Language Filter Logic
+  function filterLanguage(v) {
+    let filtered = Moviesdata.filter(m =>
+      m.language.toLowerCase().includes(v.toLowerCase())
+    );
+
+    setFilteredData(filtered);
+    setPage(1);
+  }
+
+  // ✔ Debounce Genre (optional logic)
+  function debounceGenre(v, d) {
+    clearTimeout(DebounceTimer.current);
+
+    DebounceTimer.current = setTimeout(() => {
+      let filtered = Moviesdata.filter(m =>
+        m.genre.toLowerCase().includes(v.toLowerCase())
+      );
+
+      setFilteredData(filtered);
+      setPage(1);
+    }, d);
+  }
+ function clearfilter(){
+  setFilteredData(Moviesdata)
+  setPage(1)
+  setGenre("")
+  setLanguage("")
+ }
   return (
     <div className="movies">
       <div className="title">
@@ -56,86 +121,104 @@ function Movies() {
         <h5>Filter Movie</h5>
 
         <div className="row">
-          <div className="col-4 col-lg-4 col-md-6 col-sm-12">
-            <div className="languages fitlering-fields">
-              <label>Language:</label>
-              <input type="text" readOnly placeholder="All language" />
-            </div>
+          <div className="col-4">
+            <label>Language:</label>
+            <input className="input1"
+              type="text"
+              placeholder="All language"
+              onChange={(e) => {
+                setLanguage(e.target.value)
+                filterSearch("language", e)}}
+            />
           </div>
 
-          <div className="col-4 col-lg-4 col-md-6 col-sm-12">
-            <div className="genre fitlering-fields">
-              <label>Genre:</label>
-              <input type="text" readOnly placeholder="All Genre" />
-            </div>
+          <div className="col-4">
+            <label>Genre:</label>
+            <input value={genre} 
+              type="text"
+              placeholder="All Genre"
+              onChange={(e) =>{ 
+                setGenre(e.target.value)
+                filterSearch("genre", e)}}
+            />
           </div>
 
-          <div className="col-4 col-lg-4 col-md-6 col-sm-12">
-            <div className="filter-btn">
-              <button
-                className="btn btn-primary"
-                onClick={fetchMovies} // ✔ Manual Refresh
-              >
-                Clear Filter
-              </button>
-            </div>
+          <div className="col-4">
+            <button className="btn btn-primary" onClick={clearfilter}>
+              Clear Filter
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="container">
+      <div className="container-fluid">
         <div className="row">
-
-          <div className="col-12 col-lg-4 col-md-12 col-sm-12">
+          <div className="col-12 col-lg-3 col-md-12 col-sm-12">
             <Movieform fetchMovies={fetchMovies} />
           </div>
 
-          <div className="col-12 col-lg-8 col-md-12 col-sm-12">
+          <div className="col-12 col-lg-9 col-md-12 col-sm-12">
             <div className="movie-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Director</th>
-                    <th>Releasedate</th>
-                    <th>Language</th>
-                    <th>Genre</th>
-                    <th>Action</th>
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Director</th>
+                  <th>Releasedate</th>
+                  <th>Language</th>
+                  <th>Genre</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {currentpageData.map(movie => (
+                  <tr key={movie._id}>
+                    <td>{movie.title}</td>
+                    <td>{movie.director}</td>
+                    <td>{movie.date}</td>
+                    <td>{movie.language}</td>
+                    <td>{movie.genre}</td>
+                    <td>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => playmovie(movie.videourl)}
+                      >
+                        ▶
+                      </button>
+
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => DeleteMovie(movie._id)}
+                      >
+                        🗑
+                      </button>
+                    </td>
                   </tr>
-                </thead>
+                ))}
+              </tbody>
+            </table>
+            </div>
+            <div className="pagination">
+              <button
+                onClick={() => currentpage > 1 && setPage(p => p - 1)}
+                disabled={currentpage === 1}
+              >
+                Prev
+              </button>
 
-                <tbody>
-                  {Moviesdata?.map((movie) => (
-                    <tr key={movie._id}>
-                      <td>{movie.title}</td>
-                      <td>{movie.director}</td>
-                      <td>{movie.date}</td>
-                      <td>{movie.language}</td>
-                      <td>{movie.genre}</td>
+              <span>{currentpage}</span>
 
-                      <td className="d-flex gap-1 flex-direction-column">
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => playmovie(movie.videourl)}
-                        >
-                           <i className='bi bi-play'></i>
-                        </button>
-
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => DeleteMovie(movie._id)}
-                        >
-                           <i className='bi bi-trash'></i>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-
-              </table>
+              <button
+                onClick={() =>
+                  currentpage < totalpages && setPage(p => p + 1)
+                }
+                disabled={currentpage === totalpages}
+              >
+                Next
+              </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>

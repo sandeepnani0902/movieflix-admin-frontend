@@ -11,6 +11,7 @@ import dropdownImg from "../../assets/dropdown.svg";
 import "./dashboard.css";
 
 const Sidebar = lazy(() => import("../sidebar/Sidebar"));
+// import { useNetwork } from "../../hooks/useNetwork";
 
 export const UserContext = createContext(null);
 
@@ -18,6 +19,15 @@ function Dashboard() {
   const [userData, setUserData] = useState({});
   const [checkdropdown, setCheckdropdown] = useState(false);
   const [menu, setMenu] = useState(false);
+
+  //checking online status
+
+  // const online = useNetwork()
+ 
+  // useEffect(()=>{
+    
+  
+  // },[online])
 
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -31,6 +41,7 @@ function Dashboard() {
 
   /* ---------------- Fetch Dashboard Data ---------------- */
   useEffect(() => {
+
     fetch("http://localhost:2025/movieflix/dashboard", {
       method: "GET",
       headers: {
@@ -40,6 +51,7 @@ function Dashboard() {
       .then((res) => res.json())
       .then((data) => setUserData(data.data))
       .catch((err) => console.error(err));
+
   }, []);
 
   /* ---------------- Close Dropdown on Outside Click ---------------- */
@@ -145,8 +157,8 @@ function Dashboard() {
             </Suspense>
           </div>
         </div>
-
-        <footer>ramanasoftnocopyrights@2025</footer>
+      {/* mobile version  */}
+       {window.innerWidth <= 768 ? "" : <footer>ramanasoftnocopyrights@2025</footer>}
       </div>
     </UserContext.Provider>
   );

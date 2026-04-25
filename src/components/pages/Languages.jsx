@@ -7,7 +7,7 @@ import Tabledata from './Tabledata';
 function Languages() {
   const [languageslist, setLanguageslist] = useState([])
   const [language, setLanguage] = useState("")
- 
+
       const getlanguages = async()=>{
       try{
          const res = await fetch("http://localhost:2025/movieflix/languages", 
@@ -63,6 +63,16 @@ function Languages() {
         console.log("not deleted...")
       }
     }
+
+    ///pagination
+    let [currentpage, setCurrentPage] = useState(1)
+    const perpage=5;
+    let start = currentpage *  perpage - perpage;
+    let end = currentpage * perpage
+    console.log(start, end)
+    let totalpages = Math.ceil(12/perpage)
+    let filtereddata = languageslist.slice(start, end)
+
   return (
     <div className='language-container'>
       <div className="language-header">
@@ -70,9 +80,9 @@ function Languages() {
         <div className="hr" />
       </div>
       <hr />
-      <Container className='contianer'>
-        <Row>
-          <Col lg={4} md={6} xs={12}>
+      <Container fluid className='contianer-language'>
+        <Row className="justify-content-md-center gap-2">
+          <Col xl={4} lg={4} md={6} xs={12}>
             <div className="form">
                <Form>
                   <Form.Group className="mb-3">
@@ -89,7 +99,7 @@ function Languages() {
             </div>
           </Col>
 
-          <Col lg={8} md={6} xs={12}>
+          <Col xl={6} lg={7} md={6} xs={12}>
           <div className='language-table'>
                 <h3>Language Lists ({languageslist.length > 0 ? languageslist.length : 0 })</h3>
                 <hr />
@@ -111,7 +121,12 @@ function Languages() {
                 ))}
               </tbody>
             </table> */}
-            <Tabledata datatype={language} data={ languageslist } headers={["Id", "Name", "Action"]} handledelete={handledelete}/>
+            <Tabledata datatype={language} data={ filtereddata } headers={["Id", "Name", "Action"]} handledelete={handledelete}/>
+          </div>
+          <div>Page No: 
+          <button onClick={()=>{if(currentpage>1) setCurrentPage(prev => prev - 1)}} disabled={currentpage === 1}>prev</button>
+          <span>{currentpage}</span>
+          <button onClick={()=> {if(currentpage<totalpages) setCurrentPage(prev => prev + 1)}}  disabled={currentpage === totalpages-1}>next</button>
           </div>
           </Col>
         </Row>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "./sidebar.css";
 
@@ -16,18 +16,30 @@ function Sidebar() {
     e.preventDefault();
     setCollapsed((prev) => !prev);
   }
+   useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setCollapsed(false); // mobile view → false
+      }
+    };
 
+    handleResize(); // run once on mount
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+ 
   return (
-    <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+    <div className={`sidebar ${collapsed ? "collapsed" : ""}`} onMouseOver={()=>setCollapsed(false)} onMouseLeave={()=> setCollapsed(true)}>
       {/* Toggle Button */}
-      <span
+      <span  className="sidetoggle"
         style={{
           position: "absolute",
           left: collapsed ? "30px" : "250px",
           fontSize: "25px",
           fontWeight: 900,
           cursor: "pointer",
-          zIndex: 10
+          zIndex:1
         }}
         onClick={handletoggle}
       >
