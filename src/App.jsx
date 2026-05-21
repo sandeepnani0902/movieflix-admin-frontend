@@ -3,6 +3,7 @@ import { Router,Routes, Route,NavLink,Link, Navigate } from 'react-router-dom'
 import './App.css'
 import {Suspense, lazy, useState } from 'react'
 import ProtectedRoute from './components/forms/ProtectedRoute'
+import ResetPassword from './components/forms/ResetPassword'
 const Login = lazy( () => import('./components/forms/Login'))
 const Register = lazy( () => import('./components/forms/Register'))
 const Dashboard = lazy(()=> import('./components/Dashboard/Dashboard'))
@@ -12,6 +13,7 @@ const Genre = lazy (()=>import('./components/pages/Genre'));
 const WebSeries =lazy(()=>import('./components/pages/Webseries/WebSeries'));
 const ProfileSettings = lazy(()=>import('./components/pages/profile/ProfileSettings'));
 const Languages = lazy(()=>import('./components/pages/Languages')) 
+const ForgotPassword = lazy(()=> import('./components/forms/ForgotPassword'))
 // const Viewrofile = lazy(()=>import('./components/Dashboard/Dropdownpages/Viewprofile'));
 // const  Editprofile =  './components/Dashboard/Dropdownpages/Editprofile';
 // import Username from './components/Dashboard/Dropdownpages/Username'
@@ -27,6 +29,11 @@ function App() {
         <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
+            <Route
+              path="/forgot-password"
+              element={<ForgotPassword />}
+            />
+            <Route path='/reset-password' element={<ResetPassword />} />
             <Route path="/register" element={<Register setProfile={setProfile} />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>

@@ -1,4 +1,14 @@
 .sidebar {
+  width: 250px;
+  transition: 0.3s;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+
+/* .sidebar {
   width: 310px;
   height: 100%;
   background-color: #0d1b36;
@@ -11,7 +21,7 @@
 }
 .sidebar.collapsed {
   width: 70px;
-}
+} */
 
 /* Hide text when collapsed */
 .sidebar.collapsed a span ,.sidebar.collapsed .logout span{
@@ -27,7 +37,7 @@
   color: #D4344A;
   font-size: 42px;
 }
-
+/* 
 .sidebar ul {
   list-style: none;
   padding: 0;
@@ -35,9 +45,9 @@
   flex-direction: column;
   gap: 18px;
   margin-top: 50px;
-}
-.sidebar li {
-  background-color: #0F1724;
+} */
+/* .sidebar li {
+  background-color: #0F1724 ;
   height: 40px;
   font-size: 26px;
 }
@@ -71,8 +81,8 @@ li a .bi{
 .sidebar a.active {
   
   /* display: block; */
-   background-color: #D4344A;
-}
+   /* background-color: #D4344A; */
+/* } */
 .logout{
   text-align: center;
   font-size: 26px;
@@ -90,7 +100,7 @@ li a .bi{
   outline: none;
   font-size: 26px;
   cursor: pointer;
-}
+} */
 
 @media  screen and (max-width:768px) {
   .sidebar {

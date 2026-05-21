@@ -94,6 +94,7 @@
   outline: none;
   padding-left: 10px;
   margin-left: 5px;
+  color:#181818
 }
 .login #field input::placeholder{
   font-weight: 400;

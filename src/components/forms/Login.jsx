@@ -1,120 +1,247 @@
-import React, { useEffect, useRef, useState } from 'react'
-import './login.css'
-import { NavLink, useNavigate } from 'react-router-dom'
-import Spinner from 'react-bootstrap/Spinner';
-// import bodybg from '../assets/bodybg'
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import Spinner from "react-bootstrap/Spinner";
+
 function Login() {
-    const [user, setUser] = useState({email:"",password:""})
-    const navigate = useNavigate()
-    const [showpassword, setShowpassword]  = useState(false)
-    const [loading, setLoading] =useState(false)
-    const [error, setError]=useState({
-        email:null,
-        password:null
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+
+  const navigate = useNavigate();
+
+  const [showpassword, setShowpassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] = useState({
+    email: "",
+    password: "",
+  });
+
+  // 🔥 Handle Input
+  function handleinput(e) {
+    const { name, value } = e.target;
+
+    setUser({
+      ...user,
+      [name]: value,
+    });
+  }
+
+  // 🔥 Submit Form
+  function handleform(e) {
+    e.preventDefault();
+
+    let errors = {
+      email: "",
+      password: "",
+    };
+
+    if (!user.email) {
+      errors.email = "Please enter email";
+    }
+
+    if (!user.password) {
+      errors.password = "Please enter password";
+    }
+
+    setError(errors);
+
+    if (errors.email || errors.password) return;
+
+    setLoading(true);
+
+    fetch("http://localhost:2025/movieflix/login", {
+      method: "POST",
+      body: JSON.stringify(user),
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
-    function handleinput(e){
-        const {name, value} =e.target
-        setUser( {...user, [name]:value})
-    }
+      .then((res) => res.json())
+      .then((data) => {
+        setLoading(false);
 
+        if (data?.success) {
+          if (data?.token) {
+            localStorage.setItem("token", data.token);
+          }
 
-    function handleform(e){ 
-    e.preventDefault()
-    setLoading(true)
-    // alert("hellow")
-    if(!user.email){
-         setError(prev => ({...prev , ["email"]:"please enter user"}));
-    }
-    if(!user.password){
-         setError(prev => ({...prev, ["password"]:"please enter the password"}))
-    }
-   
-    setError({email:"", password:""})
-
-    fetch("http://localhost:2025/movieflix/login",{
-        method:"POST",
-        body:JSON.stringify(user),
-        headers:{"Content-Type":"application/json"}
-    })
-    .then(res => res.json())
-    .then(data => {
-        if(data?.success){
-            // console.log(data)
-            setLoading(false)
-            alert("valid credentials :login successful")
-            if(data?.token){
-                localStorage.setItem("token", data.token)
-            }
-            
-            console.log(data)
-            navigate("/dashboard")
-            
-            // navigate('/dashboard', {state:{username:data.firstname + " " + data.lastname, profile:data.profilePic}})
+          navigate("/dashboard");
+        } else {
+          alert(data.message);
         }
-        else{
-            // console.log(data.message)
-            if(data){
-                setLoading(false)
-                alert(data.message)
-            }
-            else{
-                alert("server not connected.")
-            }
-        }
-    })
-    .catch( err => {
-        setLoading(false)
-        alert("server error")})
-   
-}
-
-function showpasswordfunction(){
- setShowpassword(!showpassword)
-   
-}
+      })
+      .catch(() => {
+        setLoading(false);
+        alert("Server Error");
+      });
+  }
 
   return (
-    <>
-        <div className='login'>
-            <div className='form-block'>
-                <form onSubmit={handleform}>
-                <h3>Sign In</h3>
-                <div className='username' id='field'>
-                    <label >User Name  <span>:</span></label>
-                    <input type="text" placeholder='Enter User Name' name="email" value={user.username} onChange={handleinput} required/><br />
-                    
-                </div>
-                { error.email ? <span style={{color:"red"}}> {error.email }</span>:"" }
-                <div id='field'>
-                    <label>Password <span>:</span></label>
-                    <input type={ showpassword ? "text" : "password"} name='password' value={user.password}  placeholder='Enter Password' onChange={handleinput} required/>
-                    
-                </div>
-                <div id='checkbox'>
-                    <input type="checkbox"  onChange={showpasswordfunction} /> 
-                    <label>Show password <span>{showpassword ? "👁️" : "🙈"}</span></label>
-                </div>
-                 { error.password ? <span style={{color:"red"}}> {error.password }</span>:"" }
-                <div id='forgot-password'>
-                   <a href="#">Forgot Password?</a>
-                </div>
-                <button type='submit' id='btn'>{ !loading ? "Sign In" : <Spinner animation="border" />} </button>
-                <div className='keep-me-sign'>
-                    <input type="checkbox"  />
-                    <label> Keep Me Signed In</label>
-                </div>
-                <div id='register'>
-                    <span>Don't have an account?</span>
-                    <NavLink to="/register">Register Here</NavLink>
-                </div>
-                
-                
-            </form>
-            </div>
-        </div>
-    </>
+    <div className="min-h-screen bg-[#0F172A] flex items-center justify-center px-4">
 
-  )
+      {/* Card */}
+      <div className="w-full max-w-md bg-[#1E293B] rounded-3xl shadow-2xl p-8">
+
+        {/* Heading */}
+        <div className="text-center mb-8">
+          <h2 className="text-4xl font-bold text-white">
+            Sign In
+          </h2>
+
+          <p className="text-slate-400 mt-2">
+            Welcome back to MovieFlix
+          </p>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleform} className="space-y-5">
+
+          {/* Email */}
+          <div>
+            <label className="block text-slate-300 mb-2 text-sm">
+              Email Address
+            </label>
+
+            <input
+              type="email"
+              placeholder="Enter your email"
+              name="email"
+              value={user.email}
+              onChange={handleinput}
+              className="
+                w-full
+                bg-slate-700
+                border border-slate-600
+                text-white
+                placeholder-slate-400
+                px-4
+                py-3
+                rounded-xl
+                outline-none
+                focus:ring-2
+                focus:ring-[#F51717]
+                transition
+              "
+            />
+
+            {error.email && (
+              <p className="text-red-400 text-sm mt-1">
+                {error.email}
+              </p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-slate-300 mb-2 text-sm">
+              Password
+            </label>
+
+            <input
+              type={showpassword ? "text" : "password"}
+              name="password"
+              value={user.password}
+              placeholder="Enter your password"
+              onChange={handleinput}
+              className="
+                w-full
+                bg-slate-700
+                border border-slate-600
+                text-white
+                placeholder-slate-400
+                px-4
+                py-3
+                rounded-xl
+                outline-none
+                focus:ring-2
+                focus:ring-[#F51717]
+                transition
+              "
+            />
+
+            {error.password && (
+              <p className="text-red-400 text-sm mt-1">
+                {error.password}
+              </p>
+            )}
+          </div>
+
+          {/* Options */}
+          <div className="flex items-center justify-between text-sm">
+
+            {/* Show Password */}
+            <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
+              <input
+                type="checkbox"
+                onChange={() =>
+                  setShowpassword(!showpassword)
+                }
+              />
+
+              Show Password
+            </label>
+
+            {/* Forgot Password */}
+            <NavLink
+              to="/forgot-password"
+              className="text-[#F51717] hover:text-red-400"
+            >
+              Forgot Password?
+            </NavLink>
+
+          </div>
+
+          {/* Button */}
+          <button
+            type="submit"
+            className="
+              w-full
+              bg-[#F51717]
+              hover:bg-red-700
+              text-white
+              font-semibold
+              py-3
+              rounded-xl
+              transition
+              duration-200
+              flex
+              justify-center
+              items-center
+            "
+          >
+            {!loading ? (
+              "Sign In"
+            ) : (
+              <Spinner animation="border" size="sm" />
+            )}
+          </button>
+
+          {/* Keep Signed In */}
+          <label className="flex items-center gap-2 text-slate-300 text-sm cursor-pointer">
+            <input type="checkbox" />
+
+            Keep Me Signed In
+          </label>
+
+        </form>
+
+        {/* Register */}
+        <div className="text-center mt-6 text-slate-400 text-sm">
+          Don't have an account?{" "}
+
+          <NavLink
+            to="/register"
+            className="text-[#F51717] hover:text-red-400 font-medium"
+          >
+            Register Here
+          </NavLink>
+        </div>
+
+      </div>
+    </div>
+  );
 }
 
-export default Login
+export default Login;
