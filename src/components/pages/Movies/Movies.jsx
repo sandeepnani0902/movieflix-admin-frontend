@@ -9,6 +9,7 @@ function Movies() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [media, setMedia] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1)
 
   // 🔹 Fetch Movies
   const fetchMovies = async () => {
@@ -139,6 +140,9 @@ function Movies() {
               title={`Movies (${movies.length})`}
               columns={columns}
               data={movies}
+              enablePagination
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
             />
           )}
         </div>

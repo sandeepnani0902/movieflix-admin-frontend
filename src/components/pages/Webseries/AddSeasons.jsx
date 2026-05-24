@@ -1,9 +1,13 @@
+import { Toast } from "bootstrap";
+import { useState } from "react";
 export default function AddSeasons({
   SeasonsCount,
   webseriesId,
   setUi,
+  SeasonPopUp
 }) {
   const [seasons, setSeasons] = useState({});
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,12 +18,17 @@ export default function AddSeasons({
       fd.append(`${k}_image`, v.image);
     });
 
-    await fetch(
+   const res = await fetch(
       `http://localhost:2025/movieflix/webseries/seasons/${webseriesId}`,
       { method: "POST", body: fd }
     );
+    if(res.data.success){
+    Toast("season successfully added",success)
+    // setUi((p) => ({ ...p, showSeasonPopup: false }));
+    SeasonPopUp(false)
+    
+    }
 
-    setUi((p) => ({ ...p, showSeasonPopup: false }));
   };
 
   return (
@@ -59,8 +68,8 @@ export default function AddSeasons({
         </div>
       ))}
 
-      <button className="bg-green-600 w-full py-2 rounded">
-        Save Seasons
+      <button className="btn bg-green-600 w-full py-2 rounded">
+        Save Seasons  
       </button>
     </form>
   );

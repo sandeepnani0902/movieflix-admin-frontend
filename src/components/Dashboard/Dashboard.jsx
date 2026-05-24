@@ -98,7 +98,9 @@ function Dashboard() {
     <img
       src={
         userData?.profile
-          ? `${BASE_URL}/${userData.profile}`
+          ? (userData.profile.startsWith("http://") || userData.profile.startsWith("https://")
+            ? userData.profile
+            : `${BASE_URL}/${userData.profile}`)
           : "/default-avatar.png"
       }
       alt="profile"
