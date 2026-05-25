@@ -12,7 +12,7 @@ function Movies() {
   const [currentPage, setCurrentPage] = useState(1)
   const [addmovie, setAddmovie] = useState(false);
 
-  // 🔹 Fetch Movies
+  // 🔹 Fetch Movie
   const fetchMovies = async () => {
     setLoading(true);
     try {
