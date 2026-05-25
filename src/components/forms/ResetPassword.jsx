@@ -18,7 +18,7 @@ function ResetPassword() {
 
     try {
       const res = await fetch(
-        "http://localhost:2025/movieflix/reset-password",
+        "https://movie-flix-product-backend.onrender.com/movieflix/reset-password",
         {
           method: "POST",
           headers: {

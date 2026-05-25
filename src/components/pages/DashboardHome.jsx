@@ -50,7 +50,7 @@ function DashboardHome() {
   // 🔹 API Calls
   const fetchLanguage = async () => {
     try {
-      const res = await fetch("http://localhost:2025/movieflix/languages");
+      const res = await fetch("https://movie-flix-product-backend.onrender.com/movieflix/languages");
       const data = await res.json();
       setLanguageList(data.data || []);
     } catch (err) {
@@ -60,7 +60,7 @@ function DashboardHome() {
 
   const fetchGenres = async () => {
     try {
-      const res = await fetch("http://localhost:2025/movieflix/genre");
+      const res = await fetch("https://movie-flix-product-backend.onrender.com/movieflix/genre");
       const data = await res.json();
       setGenreList(data.data || []);
     } catch (err) {
@@ -70,7 +70,7 @@ function DashboardHome() {
 
   const fetchMovies = async () => {
     try {
-      const res = await fetch("http://localhost:2025/movieflix/movies");
+      const res = await fetch("https://movie-flix-product-backend.onrender.com/movieflix/movies");
       const data = await res.json();
       setMovies(data.data || []);
     } catch (err) {
@@ -80,7 +80,7 @@ function DashboardHome() {
 
   const fetchWebseries = async () => {
     try {
-      const res = await fetch("http://localhost:2025/movieflix/webseries");
+      const res = await fetch("https://movie-flix-product-backend.onrender.com/movieflix/webseries");
       const data = await res.json();
       setWebSeries(data.data || []);
     } catch (err) {

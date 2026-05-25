@@ -1,26 +1,26 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import {patterns} from './validation'
+import { patterns } from './validation'
 import axios from "axios";
 function ForgotPassword() {
   const [email, setEmail] = useState("");
 
   const pattern = patterns.email
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("pattern" , pattern)
-    
-    if(pattern.test(email)){
-      const res = await  axios.post("http://localhost:2025/movieflix/forgot-password",{email})
-        if(res.data.success){
-            alert("Reset link sent to your email")
-        }else{
-            alert("Error sending reset link")
-        }
+    console.log("pattern", pattern)
+
+    if (pattern.test(email)) {
+      const res = await axios.post("https://movie-flix-product-backend.onrender.com//movieflix/forgot-password", { email })
+      if (res.data.success) {
+        alert("Reset link sent to your email")
+      } else {
+        alert("Error sending reset link")
+      }
     }
-    else{
-        alert("password not matched")
+    else {
+      alert("password not matched")
     }
   };
 
