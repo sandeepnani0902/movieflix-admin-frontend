@@ -29,7 +29,7 @@
 
 //       {/* 🔥 Top Bar (Pagination + Search) */}
 //       <div className="flex justify-between items-center mb-3">
-        
+
 //         {/* Pagination Left */}
 //         <div className="flex items-center gap-2 text-gray-300">
 //           <button
@@ -123,8 +123,8 @@ const Table = ({
   enablePagination = true,
   rowsPerPage = 5,
   enableSearch = true,
-  currentPage=1,
-  setCurrentPage = ()=>{}
+  currentPage = 1,
+  setCurrentPage = () => { }
 }) => {
   const [search, setSearch] = useState("");
   console.log("columns", columns)
@@ -140,13 +140,13 @@ const Table = ({
 
   const paginatedData = enablePagination
     ? filteredData.slice(
-        (currentPage - 1) * rowsPerPage,
-        currentPage * rowsPerPage
-      )
+      (currentPage - 1) * rowsPerPage,
+      currentPage * rowsPerPage
+    )
     : filteredData;
 
   return (
-    <div className="bg-slate-800 p-5 overflow-x-auto rounded-2xl shadow-lg w-full">
+    <div className="bg-slate-800 p-4 overflow-x-auto rounded-2xl shadow-lg w-full">
 
       {/* 🔥 Top Bar */}
       <div className="flex justify-between items-center mb-3">
@@ -165,9 +165,8 @@ const Table = ({
               <button
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`px-2 ${
-                  currentPage === i + 1 ? "text-white font-bold" : ""
-                }`}
+                className={`px-2 ${currentPage === i + 1 ? "text-white font-bold" : ""
+                  }`}
               >
                 {i + 1}
               </button>
@@ -216,34 +215,34 @@ const Table = ({
           </tr>
         </thead>
         <tbody>
-  {paginatedData.length > 0 ? (
-    paginatedData.map((row, rowIndex) => (
-      <tr key={rowIndex} className="border-b border-slate-700">
+          {paginatedData.length > 0 ? (
+            paginatedData.map((row, rowIndex) => (
+              <tr key={rowIndex} className="border-b border-slate-700">
 
-        {columns.map((col, colIndex) => (
-          <td key={colIndex} className="px-4 py-2">
-            
-            {
-              typeof col === "string"
-                ? row[col.toLowerCase()]   // ✅ for string columns
-                : typeof col.render === "function"
-                  ? col.render(row, rowIndex)    // ✅ for custom render
-                  : row[col.key]          // ✅ fallback (optional)
-            }
+                {columns.map((col, colIndex) => (
+                  <td key={colIndex} className="px-4 py-2">
 
-          </td>
-        ))}
+                    {
+                      typeof col === "string"
+                        ? row[col.toLowerCase()]   // ✅ for string columns
+                        : typeof col.render === "function"
+                          ? col.render(row, rowIndex)    // ✅ for custom render
+                          : row[col.key]          // ✅ fallback (optional)
+                    }
 
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan={columns.length} className="text-center py-4">
-        No Data Available
-      </td>
-    </tr>
-  )}
-</tbody>
+                  </td>
+                ))}
+
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={columns.length} className="text-center py-4">
+                No Data Available
+              </td>
+            </tr>
+          )}
+        </tbody>
 
         {/* <tbody>
           {paginatedData.length > 0  & data.length > 0 ? (

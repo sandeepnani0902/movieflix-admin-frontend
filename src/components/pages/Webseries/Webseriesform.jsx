@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 
 export const WebSeriesform = ({
-  SeasonPopUp,
+  setShowSeasonPopUp,
   setSeasonsCount,
   setWebseriesId,
+  setShowAddSeriesForm,
+  setShowWebSerieslist
 }) => {
-
   const [languageslist, setLanguageslist] = useState([]);
   const [genrelist, setGenrelist] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,127 +78,148 @@ export const WebSeriesform = ({
         if (data.success) {
           setWebseriesId(data.id.insertedId);
           alert("Web series added successfully");
-          SeasonPopUp(true);
+          setMovie({
+            title: "",
+            director: "",
+            date: "",
+            language: "",
+            genre: "",
+            webseriesImage: null,
+            webseriesbanner: null,
+            description: "",
+            seasons: 0,
+          });
+          setShowAddSeriesForm(false)
+          setShowSeasonPopUp(true);
         }
       })
       .finally(() => setIsSubmitting(false));
   }
 
   return (
-    <div className="bg-gray-900 p-4 rounded-xl text-white">
+    <div className="lg:w-[60%] md:w-[70%] sm:w-full flex flex-col justify-center align-center bg-gray-900  p-3 rounded-xl text-white">
+      <div className=" flex w-full justify-between">
+        <h2 className="text-xl font-semibold mb-3 ">
+          Add New Web Series
+        </h2>
 
-      <h2 className="text-lg font-semibold mb-3">
-        Add New Web Series
-      </h2>
-
-      <form onSubmit={handleform} className="space-y-3">
-
-        {/* TITLE */}
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          className="w-full p-2 bg-gray-800 rounded"
-          onChange={handleinput}
-          required
-        />
-
-        {/* DIRECTOR */}
-        <input
-          type="text"
-          name="director"
-          placeholder="Director"
-          className="w-full p-2 bg-gray-800 rounded"
-          onChange={handleinput}
-          required
-        />
-
-        {/* DATE */}
-        <input
-          type="date"
-          name="date"
-          className="w-full p-2 bg-gray-800 rounded"
-          onChange={handleinput}
-          required
-        />
-
-        {/* LANGUAGE */}
-        <select
-          name="language"
-          className="w-full p-2 bg-gray-800 rounded"
-          onChange={handleinput}
-          required
-        >
-          <option value="">Select Language</option>
-          {languageslist.map((lang) => (
-            <option key={lang._id} value={lang.language}>
-              {lang.language}
-            </option>
-          ))}
-        </select>
-
-        {/* GENRE */}
-        <select
-          name="genre"
-          className="w-full p-2 bg-gray-800 rounded"
-          onChange={handleinput}
-          required
-        >
-          <option value="">Select Genre</option>
-          {genrelist.map((gen) => (
-            <option key={gen._id} value={gen.genre}>
-              {gen.genre}
-            </option>
-          ))}
-        </select>
-
-        {/* SEASONS */}
-        <input
-          type="number"
-          name="seasons"
-          placeholder="Number of Seasons"
-          className="w-full p-2 bg-gray-800 rounded"
-          onChange={handleinput}
-          required
-        />
-
-        {/* IMAGE */}
-        <input
-          type="file"
-          name="webseriesImage"
-          className="w-full bg-gray-800 p-2 rounded"
-          onChange={handleFileInput}
-          required
-        />
-
-        {/* BANNER */}
-        <input
-          type="file"
-          name="webseriesbanner"
-          className="w-full bg-gray-800 p-2 rounded"
-          onChange={handleFileInput}
-          required
-        />
-
-        {/* DESCRIPTION */}
-        <textarea
-          name="description"
-          placeholder="Description"
-          className="w-full p-2 bg-gray-800 rounded"
-          onChange={handleinput}
-          required
-        />
-
-        {/* BUTTON */}
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full bg-blue-600 py-2 rounded hover:bg-blue-700"
-        >
-          {isSubmitting ? "Submitting..." : "Submit"}
+        <button className="bg-red-600 px-4 py-2 text-base rounded cursor-pointer mb-2 " onClick={() => {
+          setShowAddSeriesForm(false)
+          setShowWebSerieslist(true);
+        }}>
+          Close
         </button>
+      </div>
+      <div className="">
+        <form onSubmit={handleform} className="space-y-3">
 
-      </form>
+          {/* TITLE */}
+          <input
+            type="text"
+            name="title"
+            placeholder="Title"
+            className="w-full p-2 bg-gray-800 rounded"
+            onChange={handleinput}
+            required
+          />
+
+          {/* DIRECTOR */}
+          <input
+            type="text"
+            name="director"
+            placeholder="Director"
+            className="w-full p-2 bg-gray-800 rounded"
+            onChange={handleinput}
+            required
+          />
+
+          {/* DATE */}
+          <input
+            type="date"
+            name="date"
+            className="w-full p-2 bg-gray-800 rounded"
+            onChange={handleinput}
+            required
+          />
+
+          {/* LANGUAGE */}
+          <select
+            name="language"
+            className="w-full p-2 bg-gray-800 rounded"
+            onChange={handleinput}
+            required
+          >
+            <option value="">Select Language</option>
+            {languageslist.map((lang) => (
+              <option key={lang._id} value={lang.language}>
+                {lang.language}
+              </option>
+            ))}
+          </select>
+
+          {/* GENRE */}
+          <select
+            name="genre"
+            className="w-full p-2 bg-gray-800 rounded"
+            onChange={handleinput}
+            required
+          >
+            <option value="">Select Genre</option>
+            {genrelist.map((gen) => (
+              <option key={gen._id} value={gen.genre}>
+                {gen.genre}
+              </option>
+            ))}
+          </select>
+
+          {/* SEASONS */}
+          <input
+            type="number"
+            name="seasons"
+            placeholder="Number of Seasons"
+            className="w-full p-2 bg-gray-800 rounded"
+            onChange={handleinput}
+            required
+          />
+
+          {/* IMAGE */}
+          <input
+            type="file"
+            name="webseriesImage"
+            className="w-full bg-gray-800 p-2 rounded"
+            onChange={handleFileInput}
+            required
+          />
+
+          {/* BANNER */}
+          <input
+            type="file"
+            name="webseriesbanner"
+            className="w-full bg-gray-800 p-2 rounded"
+            onChange={handleFileInput}
+            required
+          />
+
+          {/* DESCRIPTION */}
+          <textarea
+            name="description"
+            placeholder="Description"
+            className="w-full p-2 bg-gray-800 rounded"
+            onChange={handleinput}
+            required
+          />
+
+          {/* BUTTON */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-blue-600 py-2 rounded hover:bg-blue-700"
+          >
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </button>
+
+        </form>
+      </div>
     </div>
   );
 };

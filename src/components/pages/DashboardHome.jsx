@@ -9,6 +9,8 @@ function DashboardHome() {
   const [movies, setMovies] = useState([]);
   const [webSeries, setWebSeries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [moviepage, setMoviePage] = useState(1);
+  const [webSeriespage, setWebSeriesPage] = useState(1);
 
   const categories = {
     Languages: language,
@@ -18,22 +20,22 @@ function DashboardHome() {
   };
   const movieColumns = ["Title", "Date", "Status"];
 
-const movieData = [
-  { title: "Inception", date: "Apr 20", status: "Published" },
-  { title: "Avatar", date: "Apr 18", status: "Pending" },
-  { title: "Interstellar", date: "Apr 15", status: "Published" },
-  { title: "Batman", date: "Apr 10", status: "Published" },
-  { title: "Joker", date: "Apr 08", status: "Pending" },
-  { title: "Tenet", date: "Apr 05", status: "Published" },
-];
+  const movieData = [
+    { title: "Inception", date: "Apr 20", status: "Published" },
+    { title: "Avatar", date: "Apr 18", status: "Pending" },
+    { title: "Interstellar", date: "Apr 15", status: "Published" },
+    { title: "Batman", date: "Apr 10", status: "Published" },
+    { title: "Joker", date: "Apr 08", status: "Pending" },
+    { title: "Tenet", date: "Apr 05", status: "Published" },
+  ];
 
-const webSeriesData = [
-  { title: "Breaking Bad", date: "Apr 12", status: "Published" },
-  { title: "Dark", date: "Apr 10", status: "Published" },
-  { title: "Money Heist", date: "Apr 08", status: "Pending" },
-  { title: "Stranger Things", date: "Apr 06", status: "Published" },
-  { title: "Loki", date: "Apr 03", status: "Published" },
-];
+  const webSeriesData = [
+    { title: "Breaking Bad", date: "Apr 12", status: "Published" },
+    { title: "Dark", date: "Apr 10", status: "Published" },
+    { title: "Money Heist", date: "Apr 08", status: "Pending" },
+    { title: "Stranger Things", date: "Apr 06", status: "Published" },
+    { title: "Loki", date: "Apr 03", status: "Published" },
+  ];
 
 
   useEffect(() => {
@@ -93,12 +95,12 @@ const webSeriesData = [
   }));
 
   return (
-    <div className="h-full overflow-y-auto bg-slate-900 text-white p-6">
+    <div className="h-full overflow-y-auto bg-slate-900 text-white p-4">
       {/* Header */}
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
 
       {/* 🔥 Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
         {Object.keys(categories).map((key) => (
           <StatCard
             key={key}
@@ -139,23 +141,27 @@ const webSeriesData = [
           </tbody>
         </table>
       </div> */}
-      import Table from "../components/Table";
+      {/* import Table from "../components/Table"; */}
 
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-  
-  <Table 
-    title="Recent Movies"
-    columns={movieColumns}
-    data={movieData}
-  />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-2">
 
-  <Table 
-    title="Web Series"
-    columns={movieColumns}
-    data={webSeriesData}
-  />
+        <Table
+          title="Recent Movies"
+          columns={movieColumns}
+          data={movieData}
+          currentPage={moviepage}
+          setCurrentPage={setMoviePage}
+        />
 
-</div>
+        <Table
+          title="Web Series"
+          columns={movieColumns}
+          data={webSeriesData}
+          currentPage={webSeriespage}
+          setCurrentPage={setWebSeriesPage}
+        />
+
+      </div>
 
     </div>
   );

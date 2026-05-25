@@ -13,7 +13,6 @@ const UpdateseasonForm = lazy(() => import("./UpdateseasonForm"));
 function WebSeries() {
   const [webSeries, setWebSeries] = useState([]);
 
-  const [showSeasonPopUp, setShowSeasonPopUp] = useState(false);
   const [SeasonsCount, setSeasonsCount] = useState(0);
 
   const [webseriesId, setWebseriesId] = useState(null);
@@ -23,6 +22,12 @@ function WebSeries() {
   const [showEpisodePage, setShowEpisodePage] = useState(false);
   const [showupdateSeasonForm, setshowupdateSeasonForm] = useState(false);
   const [showUpdateSereisForm, setShowUpdateSeriesForm] = useState(false);
+
+// condition for model to show and close
+  const [showAddSeriesForm, setShowAddSeriesForm] = useState(false);
+  const [showWebSerieslist, setShowWebSerieslist] = useState(true);
+  const [showSeasonPopUp, setShowSeasonPopUp] = useState(false);
+
 
   const [UpdatedSeasonData, setUdatedSeasonData] = useState({
     id: null,
@@ -39,46 +44,52 @@ function WebSeries() {
 
   {
     title: "Seasons",
-    render: (ws) => (
-      <div className="space-y-2">
-        {ws?.seasons?.map((s, i) => (
-          <div key={i} className="bg-gray-800 p-2 rounded">
+   render: (ws) => (
+  <div className="space-y-2">
+    {ws?.seasons?.length > 0 ? (
+      ws.seasons.map((s, i) => (
+        <div key={i} className="bg-gray-800 p-2 rounded">
+          <p>
+            Season {s.seasonNumber}: {s.title}
+          </p>
 
-            <p>
-              Season {s.seasonNumber}: {s.title}
-            </p>
+          <p className="text-xs">
+            Episodes: {s.episodes?.length || 0}
+          </p>
 
-            <p className="text-xs">
-              Episodes: {s.episodes?.length || 0}
-            </p>
+          <div className="flex gap-2 mt-1">
+            <button
+              className="bg-blue-600 px-2 py-1 text-xs rounded"
+              onClick={(e) =>
+                ViewEpisodes(e, ws._id, s.seasonNumber)
+              }
+            >
+              Episodes
+            </button>
 
-            <div className="flex gap-2 mt-1">
-
-              <button
-                className="bg-blue-600 px-2 py-1 text-xs rounded"
-                onClick={(e) =>
-                  ViewEpisodes(e, ws._id, s.seasonNumber)
-                }
-              >
-                Episodes
-              </button>
-
-              <button
-                className="bg-yellow-600 px-2 py-1 text-xs rounded"
-                onClick={(e) =>
-
-                  ManageSeason(e, ws._id, s.seasonNumber)
-                }
-              >
-                Edit
-              </button>
-
-            </div>
-
+            <button
+              className="bg-yellow-600 px-2 py-1 text-xs rounded"
+              onClick={(e) =>
+                ManageSeason(e, ws._id, s.seasonNumber)
+              }
+            >
+              Edit
+            </button>
           </div>
-        ))}
+        </div>
+      ))
+    ) : (
+      <div>
+        <button
+          className="bg-green-600 px-2 py-1 text-xs rounded"
+          onClick={(e) => ManageSeason(e, ws._id,true)}
+        >
+          Add Season
+        </button>
       </div>
-    ),
+    )}
+  </div>
+),
   },
 
   {
@@ -142,8 +153,15 @@ function WebSeries() {
   }
 
   // SEASON UPDATE FLOW
-  function ManageSeason(e, wsId, seasonNumber) {
+  function ManageSeason(e, wsId, seasonNumber, addseason=false) {
     e.preventDefault();
+    if(seasonNumber === true || addseason === true){
+      setShowSeasonPopUp(true);
+      setShowWebSerieslist(false);
+      setWebseriesId(wsId);
+      setshowupdateSeasonForm(false)
+      return;
+    }
     setUdatedSeasonData({
       id: wsId,
       seasonNumber: Number(seasonNumber),
@@ -198,48 +216,62 @@ function WebSeries() {
         Web Series Management
       </h2>
 
-      <div className="grid grid-cols-12 gap-4">
+      <div>
 
         {/* FORM */}
-        <div className="col-span-3 bg-gray-900 p-4 rounded-xl">
+      { showAddSeriesForm && <div className="flex justify-center w-full items-center">
           <Suspense fallback="Loading...">
             <WebSeriesform
               setSeasonsCount={setSeasonsCount}
               setWebseriesId={setWebseriesId}
-              SeasonPopUp={setShowSeasonPopUp}
+              setShowSeasonPopUp={setShowSeasonPopUp}
+              setShowAddSeriesForm={setShowAddSeriesForm}
+              setShowWebSerieslist={setShowWebSerieslist}
+              
             />
-          </Suspense>
+          </Suspense>  
+        </div>
+        }
 
-          {showSeasonPopUp && (
-            <div className="mt-4 bg-gray-800 p-3 rounded">
+        {showSeasonPopUp && (
+            <div className="flex justify-center items-center ">
               <Suspense fallback="Loading...">
                 <AddSeasons
-                  SeasonsCount={SeasonsCount}
+                  // SeasonsCount={SeasonsCount}
                   webseriesId={webseriesId}
-                  SeasonPopUp={setShowSeasonPopUp}
+                  setShowSeasonPopUp={setShowSeasonPopUp}
+                  setShowWebSerieslist={setShowWebSerieslist}
+                  fetchWebSeries={fetchWebSeries}
+
                 />
               </Suspense>
             </div>
           )}
-        </div>
 
-        {/* TABLE */}
-        <div className="col-span-9 bg-gray-900 p-4 rounded-xl">
+       {showWebSerieslist && <div className="col-span-9 bg-gray-900 p-4 rounded-xl">
+          <div className="flex justify-between items-center">
 
           <h3 className="mb-3">
             Web Series 
           </h3>
+          <button className="bg-blue-600 px-2 py-2 text-xs rounded cursor-pointer mb-2 float-right " onClick={()=>{
+          setShowWebSerieslist(false);
 
-  <Table
-  title={`Web Series List (${webSeries.length})`}
-  data={currentpageData}
-  currentPage={currentpage}
-  setCurrentPage={setPage}
-  enablePagination={true}
-  enableSearch={true}
-  rowsPerPage={5}
-  columns={columns}
-/>
+           setShowAddSeriesForm(true);
+            // setSeasonPopUp(false);
+          }}>
+            add webseries </button>
+            </div>
+          <Table
+          title={`Web Series List (${webSeries.length})`}
+          data={currentpageData}
+          currentPage={currentpage}
+          setCurrentPage={setPage}
+          enablePagination={true}
+          enableSearch={true}
+          rowsPerPage={5}
+          columns={columns}
+        />
 
 
 
@@ -270,7 +302,7 @@ function WebSeries() {
             </button>
           </div> */}
 
-        </div>
+        </div>}
       </div>
 
       {/* MODALS */}
@@ -285,7 +317,8 @@ function WebSeries() {
         />
       )}
 
-      {showUpdateSereisForm && (
+      {showUpdateSereisForm && ( 
+        <div className="col-span-12 bg-gray-900 p-4 rounded-xl">
         <UpdateSeriesForm
           setShowUpdateSeriesForm={
             setShowUpdateSeriesForm
@@ -293,8 +326,9 @@ function WebSeries() {
           webseriesId={webseriesId}
           fetchWebSeries={fetchWebSeries}
         />
+        </div>
       )}
-
+  
     </div>
   );
 }

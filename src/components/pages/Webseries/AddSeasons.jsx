@@ -1,79 +1,265 @@
-import { Toast } from "bootstrap";
 import { useState } from "react";
-export default function AddSeasons({
-  SeasonsCount,
-  webseriesId,
-  setUi,
-  SeasonPopUp
-}) {
-  const [seasons, setSeasons] = useState({});
-  
 
-  const handleSubmit = async (e) => {
+export default function AddSeasons({
+  
+  webseriesId,
+  setShowSeasonPopUp,
+  setShowWebSerieslist,
+  fetchWebSerie
+
+}) {
+  const [seasons, setSeasons] = useState([
+    {
+      seasonNumber: 1,
+      title: "",
+      image: null,
+    },
+  ]);
+
+  // ADD NEW SEASON
+  function AddSeasonField() {
+    setSeasons((prev) => [
+      ...prev,
+      {
+        seasonNumber: prev.length + 1,
+        title: "",
+        image: null,
+      },
+    ]);
+  }
+
+  // REMOVE SEASON
+  function RemoveSeason(index) {
+    const updated = seasons
+      .filter((_, i) => i !== index)
+      .map((s, i) => ({
+        ...s,
+        seasonNumber: i + 1,
+      }));
+
+    setSeasons(updated);
+  }
+
+  // HANDLE INPUT
+  function HandleChange(index, field, value) {
+    const updated = [...seasons];
+
+    updated[index][field] = value;
+
+    setSeasons(updated);
+  }
+
+  // SUBMIT
+  async function handleSubmit(e) {
     e.preventDefault();
 
     const fd = new FormData();
-    Object.entries(seasons).forEach(([k, v]) => {
-      fd.append(`${k}_title`, v.title);
-      fd.append(`${k}_image`, v.image);
+
+    seasons.forEach((season, index) => {
+      fd.append(
+        `season${index + 1}_title`,
+        season.title
+      );
+
+      fd.append(
+        `season${index + 1}_image`,
+        season.image
+      );
     });
 
-   const res = await fetch(
-      `http://localhost:2025/movieflix/webseries/seasons/${webseriesId}`,
-      { method: "POST", body: fd }
-    );
-    if(res.data.success){
-    Toast("season successfully added",success)
-    // setUi((p) => ({ ...p, showSeasonPopup: false }));
-    SeasonPopUp(false)
-    
-    }
+    try {
+      const res = await fetch(
+        `http://localhost:2025/movieflix/webseries/seasons/${webseriesId}`,
+        {
+          method: "POST",
+          body: fd,
+        }
+      );
 
-  };
+      const data = await res.json();
+
+      if (data.success) {
+        alert("Seasons added successfully");
+
+        setShowSeasonPopUp(false);
+        setShowWebSerieslist(true);
+        fetchWebSerie();
+      }
+    } catch (err) {
+      console.log(err);
+      alert("Failed to add seasons");
+    }
+  }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="flex justify-center items-center bg-gray-900 p-4 rounded-xl">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4 w-full"
+      >
+        <h2 className="text-xl font-bold text-white">
+          Add Seasons
+        </h2>
 
-      {Array.from({ length: SeasonsCount }).map((_, i) => (
-        <div key={i} className="p-2 bg-gray-800 rounded">
+        {seasons.map((season, index) => (
+          <div
+            key={index}
+            className="p-4 bg-gray-800 rounded-lg"
+          >
+            <div className="flex justify-between items-center mb-2">
+              <p className="font-bold text-blue-400">
+                Season {season.seasonNumber}
+              </p>
 
-          <p className="font-bold">Season {i + 1}</p>
+              {seasons.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => RemoveSeason(index)}
+                  className="bg-red-600 px-2 py-1 rounded text-xs"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
 
-          <input
-            className="w-full p-1 mt-1 bg-gray-700"
-            placeholder="Title"
-            onChange={(e) =>
-              setSeasons((p) => ({
-                ...p,
-                [`season${i + 1}`]: {
-                  ...p[`season${i + 1}`],
-                  title: e.target.value,
-                },
-              }))
-            }
-          />
+            <input
+              type="text"
+              placeholder="Season Title"
+              value={season.title}
+              onChange={(e) =>
+                HandleChange(
+                  index,
+                  "title",
+                  e.target.value
+                )
+              }
+              className="w-full p-2 mb-2 bg-gray-700 rounded"
+            />
 
-          <input
-            type="file"
-            onChange={(e) =>
-              setSeasons((p) => ({
-                ...p,
-                [`season${i + 1}`]: {
-                  ...p[`season${i + 1}`],
-                  image: e.target.files[0],
-                },
-              }))
-            }
-          />
+            <input
+              type="file"
+              onChange={(e) =>
+                HandleChange(
+                  index,
+                  "image",
+                  e.target.files[0]
+                )
+              }
+              className="w-full"
+            />
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={AddSeasonField}
+          className="bg-green-600 px-4 py-2 rounded w-full"
+        >
+          + Add Another Season
+        </button>
+
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setShowSeasonPopUp(false);
+              setShowWebSerieslist(true);
+            }}
+            className="bg-gray-600 px-4 py-2 rounded w-full"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            className="bg-blue-600 px-4 py-2 rounded w-full"
+          >
+            Save Seasons
+          </button>
         </div>
-      ))}
-
-      <button className="btn bg-green-600 w-full py-2 rounded">
-        Save Seasons  
-      </button>
-    </form>
+      </form>
+    </div>
   );
 }
+
+// import { Toast } from "bootstrap";
+// import { useState } from "react";
+// export default function AddSeasons({
+//   SeasonsCount,
+//   webseriesId,
+//   setUi,
+//   SeasonPopUp
+// }) {
+//   const [seasons, setSeasons] = useState({});
+  
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     const fd = new FormData();
+//     Object.entries(seasons).forEach(([k, v]) => {
+//       fd.append(`${k}_title`, v.title);
+//       fd.append(`${k}_image`, v.image);
+//     });
+
+//    const res = await fetch(
+//       `http://localhost:2025/movieflix/webseries/seasons/${webseriesId}`,
+//       { method: "POST", body: fd }
+//     );
+//     if(res.data.success){
+//     Toast("season successfully added",success)
+//     // setUi((p) => ({ ...p, showSeasonPopup: false }));
+//     SeasonPopUp(false)
+    
+//     }
+
+//   };
+
+//   return (
+//     <div className="flex justify-center items-center bg-gray-800 p-4">
+//     <form onSubmit={handleSubmit} className="space-y-4">
+
+//       {Array.from({ length: SeasonsCount }).map((_, i) => (
+//         <div key={i} className="p-2 bg-gray-800 rounded">
+
+//           <p className="font-bold text-primary mb-1">Season {i + 1}</p>
+
+//           <input
+//             className="w-full p-1 mb-2 bg-gray-700 rounded-lg"
+//             placeholder="Title"
+//             onChange={(e) =>
+//               setSeasons((p) => ({
+//                 ...p,
+//                 [`season${i + 1}`]: {
+//                   ...p[`season${i + 1}`],
+//                   title: e.target.value,
+//                 },
+//               }))
+//             }
+//           />
+
+//           <input
+//             type="file"
+//             onChange={(e) =>
+//               setSeasons((p) => ({
+//                 ...p,
+//                 [`season${i + 1}`]: {
+//                   ...p[`season${i + 1}`],
+//                   image: e.target.files[0],
+//                 },
+//               }))
+//             }
+//           />
+//         </div>
+//       ))}
+
+//       <button className="btn bg-green-600 w-full py-2 rounded">
+//         Save Seasons  
+//       </button>
+//     </form>
+//     </div>
+//   );
+// }
 
 
 

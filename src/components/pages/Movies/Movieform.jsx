@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ButtonLoader from "../../Loaders/ButtonLoader";
 
-export const Movieform = ({ fetchMovies }) => {
+export const Movieform = ({ fetchMovies, setAddmovie }) => {
   const [languageslist, setlanguageslist] = useState([]);
   const [genrelist, setgenrelist] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -97,10 +97,11 @@ export const Movieform = ({ fetchMovies }) => {
   return (
     <div className="bg-slate-800 p-5 rounded-2xl shadow-lg">
 
-      <h2 className="text-lg mb-4">Add Movie</h2>
-
+      <div className="flex justify-between">
+        <h2 className="text-lg mb-4">Add Movie</h2>
+        <button onClick={()=>setAddmovie(false)} className="bg-red-500 text-white h-fit px-4 py-2 mb-2 rounded">Cancel</button>
+      </div>
       <form onSubmit={handleSubmit} className="space-y-3">
-
         <input name="title" value={movie.title} onChange={handleinput} placeholder="Title"
           className="w-full bg-slate-700 p-2 rounded" />
 

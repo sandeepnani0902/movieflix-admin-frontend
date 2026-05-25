@@ -103,17 +103,17 @@ const [btnLoading, setBtnLoading] = useState(false);
   ];
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-6">
+    <div className="min-h-screen bg-slate-900 text-white p-4">
 
       {/* Header */}
-      <h1 className="text-2xl font-bold mb-6">
+      <h1 className="text-2xl font-bold mb-4">
         Language Management
       </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* 🔥 Form */}
-        <div className="bg-slate-800 p-5 rounded-2xl shadow-lg">
+        <div className="h-fit bg-slate-800 p-3 rounded-2xl shadow-lg">
           <h2 className="text-lg mb-4">Add Language</h2>
 
           <input

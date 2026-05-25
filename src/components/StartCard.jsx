@@ -4,7 +4,7 @@ const StatCard = ({ title, value, change }) => {
   const isPositive = change >= 0;
 
   return (
-    <div className="bg-slate-800 p-5 rounded-2xl shadow-md 
+    <div className="bg-slate-800 p-3 rounded-2xl shadow-md 
                     hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
 
       <div className="flex justify-between items-center mb-3">

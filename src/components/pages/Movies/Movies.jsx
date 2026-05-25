@@ -10,6 +10,7 @@ function Movies() {
   const [loading, setLoading] = useState(false);
   const [media, setMedia] = useState(null);
   const [currentPage, setCurrentPage] = useState(1)
+  const [addmovie, setAddmovie] = useState(false);
 
   // 🔹 Fetch Movies
   const fetchMovies = async () => {
@@ -35,7 +36,7 @@ function Movies() {
   // 🔹 Play
   const playmovie = (url) => {
     window.open(url, "_blank");
-    
+
   };
 
   // 🔹 Delete
@@ -93,13 +94,13 @@ function Movies() {
       render: (row) => (
         <div className="flex gap-3">
           <button
-             onClick={() =>
-          setMedia({
-            url: row.videourl,
-            type: "video",
-            title: row.title,
-          })
-        }
+            onClick={() =>
+              setMedia({
+                url: row.videourl,
+                type: "video",
+                title: row.title,
+              })
+            }
             className="text-green-400 hover:text-green-500"
           >
             ▶
@@ -124,31 +125,32 @@ function Movies() {
         Movie Management
       </h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      {/* <div className="grid grid-cols-1 lg:grid-cols-4 gap-6"> */}
+      <div className="flex justify-center align-center">
 
-        {/* 🔥 Form */}
-        <div className="lg:col-span-1">
-          <Movieform fetchMovies={fetchMovies} />
-        </div>
-
-        {/* 🔥 Table */}
-        <div className="lg:col-span-3">
-          {loading ? (
-            <TableSkeleton rows={6} cols={6} />
-          ) : (
-            <Table
-              title={`Movies (${movies.length})`}
-              columns={columns}
-              data={movies}
-              enablePagination
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-            />
-          )}
-        </div>
-
+        {addmovie ? (<div className="w-[50%]">
+          <Movieform fetchMovies={fetchMovies} setAddmovie={setAddmovie} />
+        </div>) : (
+          <div className="w-full">
+            <div className="flex justify-end">
+              <button onClick={() => setAddmovie(true)} className="bg-blue-500 text-white px-4 py-2 mb-2 rounded">Add movie</button>
+            </div>
+            {loading ? (
+              <TableSkeleton rows={6} cols={6} />
+            ) : (
+              <Table
+                title={`Movies (${movies.length})`}
+                columns={columns}
+                data={movies}
+                enablePagination
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+              />
+            )}
+          </div>
+        )}
       </div>
-      
+
       {media && (
         <MediaViewer
           media={media}
@@ -300,10 +302,10 @@ export default Movies;
 
 //           <div className="col-4">
 //             <label>Genre:</label>
-//             <input value={genre} 
+//             <input value={genre}
 //               type="text"
 //               placeholder="All Genre"
-//               onChange={(e) =>{ 
+//               onChange={(e) =>{
 //                 setGenre(e.target.value)
 //                 filterSearch("genre", e)}}
 //             />
