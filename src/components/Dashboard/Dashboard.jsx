@@ -24,7 +24,7 @@ function Dashboard() {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-  const BASE_URL = "http://localhost:2025";
+  const BASE_URL = "http://https://movie-flix-product-backend.onrender.com/";
 
   /* ---------------- Fetch Data ---------------- */
   useEffect(() => {

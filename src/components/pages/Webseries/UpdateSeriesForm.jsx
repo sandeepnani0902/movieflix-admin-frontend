@@ -17,7 +17,7 @@ function UpdateSeriesForm({
 
     try {
       const res = await fetch(
-        `http://localhost:2025/movieflix/webseries/${webseriesId}/updatetitle`,
+        `https://movie-flix-product-backend.onrender.com/movieflix/webseries/${webseriesId}/updatetitle`,
         {
           method: "POST",
           headers: {

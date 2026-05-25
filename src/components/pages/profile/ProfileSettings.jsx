@@ -33,7 +33,7 @@ function ProfileSettings() {
       return url;
     }
     const clean = url.startsWith('/') ? url.slice(1) : url;
-    return `http://localhost:2025/${clean}`;
+    return `https://movie-flix-product-backend.onrender.com/${clean}`;
   };
 
   const handleInputChange = (e) => {
@@ -81,7 +81,7 @@ function ProfileSettings() {
       }
 
       const response = await axios.post(
-        'http://localhost:2025/movieflix/update-profile',
+        'https://movie-flix-product-backend.onrender.com/movieflix/update-profile',
         dataToSend,
         {
           headers: {
@@ -117,13 +117,12 @@ function ProfileSettings() {
   return (
     <div className="min-h-screen bg-slate-900 text-white flex justify-center items-center p-6">
       <div className="bg-slate-800 rounded-2xl shadow-xl p-8 w-full max-w-md border border-slate-700/50">
-        
+
         {/* Profile Image & Avatar Trigger */}
         <div className="flex flex-col items-center mb-6 relative">
           <div
-            className={`w-28 h-28 rounded-full overflow-hidden border-4 border-blue-500 shadow-md relative group select-none ${
-              isEditing ? 'cursor-pointer' : ''
-            }`}
+            className={`w-28 h-28 rounded-full overflow-hidden border-4 border-blue-500 shadow-md relative group select-none ${isEditing ? 'cursor-pointer' : ''
+              }`}
             onClick={handleImageClick}
           >
             <img

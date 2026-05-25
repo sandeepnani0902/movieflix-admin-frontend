@@ -28,7 +28,7 @@ export const Episode = ({
     setLoading(true);
     try {
       const res = await axios.get(
-        "http://localhost:2025/movieflix/webseries"
+        "https://movie-flix-product-backend.onrender.com/movieflix/webseries"
       );
       setWebseriesdata(res.data.data);
 
@@ -73,7 +73,7 @@ export const Episode = ({
     formData.append("webseriesId", SelectedWebseriesId);
 
     const res = await fetch(
-      `http://localhost:2025/movieflix/webseries/season/addepisode/${SelectedWebseriesId}`,
+      `https://movie-flix-product-backend.onrender.com/movieflix/webseries/season/addepisode/${SelectedWebseriesId}`,
       {
         method: "POST",
         body: formData,
@@ -101,7 +101,7 @@ export const Episode = ({
     if (!window.confirm("Delete episode?")) return;
 
     await fetch(
-      `http://localhost:2025/movieflix/webseries/${wsId}/seasons/${season}/episodes/${episode}`,
+      `https://movie-flix-product-backend.onrender.com/movieflix/webseries/${wsId}/seasons/${season}/episodes/${episode}`,
       { method: "DELETE" }
     );
 
@@ -114,11 +114,11 @@ export const Episode = ({
       title: "Poster",
       render: (row) => (
         <img
-          src={`http://localhost:2025/${row.banner}`}
+          src={`https://movie-flix-product-backend.onrender.com/${row.banner}`}
           className="w-12 h-12 rounded object-cover cursor-pointer"
           onClick={() =>
             setMedia({
-              url: `http://localhost:2025/${row.banner}`,
+              url: `https://movie-flix-product-backend.onrender.com/${row.banner}`,
               type: "image",
               title: row.title,
             })

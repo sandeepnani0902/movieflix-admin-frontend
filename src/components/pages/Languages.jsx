@@ -19,7 +19,7 @@ const [btnLoading, setBtnLoading] = useState(false);
   const getlanguages = async () => {
     setLoading(true)
     try {
-      const res = await fetch("http://localhost:2025/movieflix/languages");
+      const res = await fetch("https://movie-flix-product-backend.onrender.com/movieflix/languages");
       const data = await res.json();
       setLanguageslist(data.data || []);
      
@@ -41,7 +41,7 @@ const [btnLoading, setBtnLoading] = useState(false);
      setBtnLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:2025/movieflix/language",
+        "https://movie-flix-product-backend.onrender.com/movieflix/language",
         { language }
       );
 
@@ -63,7 +63,7 @@ const [btnLoading, setBtnLoading] = useState(false);
 
     try {
       const res = await fetch(
-        `http://localhost:2025/movieflix/language/${_id}`,
+        `https://movie-flix-product-backend.onrender.com/movieflix/language/${_id}`,
         { method: "DELETE" }
       );
 

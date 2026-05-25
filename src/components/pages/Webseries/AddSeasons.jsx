@@ -69,7 +69,7 @@ export default function AddSeasons({
 
     try {
       const res = await fetch(
-        `http://localhost:2025/movieflix/webseries/seasons/${webseriesId}`,
+        `https://movie-flix-product-backend.onrender.com/movieflix/webseries/seasons/${webseriesId}`,
         {
           method: "POST",
           body: fd,

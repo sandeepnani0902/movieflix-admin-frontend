@@ -197,7 +197,7 @@ function Register() {
       );
 
       const res = await fetch(
-        "http://localhost:2025/movieflix/register",
+        "https://movie-flix-product-backend.onrender.com//movieflix/register",
         {
           method: "POST",
           body: formData,

@@ -17,7 +17,7 @@ function Genre() {
   const fetchGenres = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:2025/movieflix/genre");
+      const res = await axios.get("https://movie-flix-product-backend.onrender.com/movieflix/genre");
       if (res.data.success) {
         setGenreList(res.data.data);
       }
@@ -40,7 +40,7 @@ function Genre() {
 
     try {
       const res = await axios.post(
-        "http://localhost:2025/movieflix/genre",
+        "https://movie-flix-product-backend.onrender.com/movieflix/genre",
         { genre, category }
       );
 
@@ -62,7 +62,7 @@ function Genre() {
 
     try {
       const res = await fetch(
-        `http://localhost:2025/movieflix/genre/${id}`,
+        `https://movie-flix-product-backend.onrender.com/movieflix/genre/${id}`,
         { method: "DELETE" }
       );
 

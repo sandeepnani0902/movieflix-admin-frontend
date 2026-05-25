@@ -29,13 +29,13 @@ export const WebSeriesform = ({
   }, []);
 
   const fetchLanguages = () => {
-    fetch("http://localhost:2025/movieflix/languages")
+    fetch("https://movie-flix-product-backend.onrender.com/movieflix/languages")
       .then((res) => res.json())
       .then((data) => setLanguageslist(data.data || []));
   };
 
   const fetchGenres = () => {
-    fetch("http://localhost:2025/movieflix/genre")
+    fetch("https://movie-flix-product-backend.onrender.com/movieflix/genre")
       .then((res) => res.json())
       .then((data) => setGenrelist(data.data || []));
   };
@@ -69,7 +69,7 @@ export const WebSeriesform = ({
       formData.append(key, movie[key])
     );
 
-    fetch("http://localhost:2025/movieflix/webseries", {
+    fetch("https://movie-flix-product-backend.onrender.com/movieflix/webseries", {
       method: "POST",
       body: formData,
     })

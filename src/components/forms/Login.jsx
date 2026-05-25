@@ -51,7 +51,7 @@ function Login() {
 
     setLoading(true);
 
-    fetch("http://localhost:2025/movieflix/login", {
+    fetch("https://movie-flix-product-backend.onrender.com/movieflix/login", {
       method: "POST",
       body: JSON.stringify(user),
       headers: {

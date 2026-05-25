@@ -16,7 +16,7 @@ function Movies() {
   const fetchMovies = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:2025/movieflix/movies");
+      const res = await fetch("https://movie-flix-product-backend.onrender.com/movieflix/movies");
       const data = await res.json();
 
       if (data.success) {
@@ -45,7 +45,7 @@ function Movies() {
 
     try {
       const res = await fetch(
-        `http://localhost:2025/movieflix/movies/deletemovie/${id}`,
+        `https://movie-flix-product-backend.onrender.com/movieflix/movies/deletemovie/${id}`,
         { method: "DELETE" }
       );
 

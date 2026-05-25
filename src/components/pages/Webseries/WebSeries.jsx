@@ -123,7 +123,7 @@ function WebSeries() {
 
   async function fetchWebSeries() {
     const res = await axios.get(
-      "http://localhost:2025/movieflix/webseries"
+      "https://movie-flix-product-backend.onrender.com/movieflix/webseries"
     );
     setWebSeries(res.data?.data || []);
   }
@@ -143,7 +143,7 @@ function WebSeries() {
     if (confirm("Do you want to delete webseries?")) {
       axios
         .delete(
-          `http://localhost:2025/movieflix/webseries/${id}`
+          `https://movie-flix-product-backend.onrender.com/movieflix/webseries/${id}`
         )
         .then(() => fetchWebSeries())
         .catch((err) =>
@@ -172,7 +172,7 @@ function WebSeries() {
 
   function SendUpdateSeason() {
     fetch(
-      `http://localhost:2025/movieflix/webseries/${UpdatedSeasonData.id}/seasons/${UpdatedSeasonData.seasonNumber}/updatetitle`,
+      `https://movie-flix-product-backend.onrender.com/movieflix/webseries/${UpdatedSeasonData.id}/seasons/${UpdatedSeasonData.seasonNumber}/updatetitle`,
       {
         method: "POST",
         body: JSON.stringify({

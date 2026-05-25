@@ -27,13 +27,13 @@ export const Movieform = ({ fetchMovies, setAddmovie }) => {
   }, []);
 
   const fetchLanguages = async () => {
-    const res = await fetch("http://localhost:2025/movieflix/languages");
+    const res = await fetch("https://movie-flix-product-backend.onrender.com/movieflix/languages");
     const data = await res.json();
     setlanguageslist(data.data || []);
   };
 
   const fetchGenres = async () => {
-    const res = await fetch("http://localhost:2025/movieflix/genre");
+    const res = await fetch("https://movie-flix-product-backend.onrender.com/movieflix/genre");
     const data = await res.json();
     setgenrelist(data.data || []);
   };
@@ -60,7 +60,7 @@ export const Movieform = ({ fetchMovies, setAddmovie }) => {
 
     try {
       const res = await fetch(
-        "http://localhost:2025/movieflix/addmovie",
+        "https://movie-flix-product-backend.onrender.com/movieflix/addmovie",
         {
           method: "POST",
           body: formData,
